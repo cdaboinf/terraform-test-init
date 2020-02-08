@@ -6,3 +6,27 @@ resource "aws_vpc" "developemnt_network" {
       Name = "terraform-dev-init"
   }
 }
+
+resource "aws_subnet" "subnet-1" {
+  cidr_block = "${cidrsubnet(aws_vpc.developemnt_network.cidr_block, 3, 1)}"
+  vpc_id = "${aws_vpc.developemnt_network.id}"
+  availability_zone = "us-east-1a"
+}
+
+resource "aws_subnet" "subnet-2" {
+  cidr_block = "${cidrsubnet(aws_vpc.developemnt_network.cidr_block, 2, 2)}"
+  vpc_id = "${aws_vpc.developemnt_network.id}"
+  availability_zone = "us-east-1b"
+}
+
+resource "aws_security_group" "subnet-security" {
+vpc_id = "${aws_vpc.developemnt_network.id}"
+
+  ingress { 
+    cidr_blocks = ["${aws_vpc.developemnt_network.cidr_block}"]
+    
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+  }
+}
